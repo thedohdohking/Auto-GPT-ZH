@@ -5,7 +5,7 @@ init(autoreset=True)
 
 # Use the bold ANSI style
 print(
-    f"""{Style.BRIGHT}Please run:
+    f"""{Style.BRIGHT}请 运行:
 python -m autogpt
 """
 )
