@@ -24,19 +24,19 @@ def check_openai_api_key():
     if not cfg.openai_api_key:
         print(
             Fore.RED
-            + "Please set your OpenAI API key in .env or as an environment variable."
+            + "请在config.py文件或环境变量中设置您的OpenAI API密钥。"
         )
-        print("You can get your key from https://beta.openai.com/account/api-keys")
+        print("你可以在这里设置OpenAI Key https://beta.openai.com/account/api-keys")
         exit(1)
 
 
 def attempt_to_fix_json_by_finding_outermost_brackets(json_string):
     if cfg.speak_mode and cfg.debug_mode:
         speak.say_text(
-            "I have received an invalid JSON response from the OpenAI API. "
-            "Trying to fix it now."
+            "我从OpenAI API接收到了无效的JSON响应"
+            "现在尝试修复它."
         )
-    logger.typewriter_log("Attempting to fix JSON by finding outermost brackets\n")
+    logger.typewriter_log("正在尝试通过查找最外层的括号来修复JSON \n")
 
     try:
         # Use regex to search for JSON objects
@@ -49,19 +49,19 @@ def attempt_to_fix_json_by_finding_outermost_brackets(json_string):
             # Extract the valid JSON object from the string
             json_string = json_match.group(0)
             logger.typewriter_log(
-                title="Apparently json was fixed.", title_color=Fore.GREEN
+                title="JSON已经被修复.", title_color=Fore.GREEN
             )
             if cfg.speak_mode and cfg.debug_mode:
-                speak.say_text("Apparently json was fixed.")
+                speak.say_text("JSON已经被修复.")
         else:
-            raise ValueError("No valid JSON object found")
+            raise ValueError("未找到有效的JSON对象")
 
     except (json.JSONDecodeError, ValueError) as e:
         if cfg.debug_mode:
-            logger.error("Error: Invalid JSON: %s\n", json_string)
+            logger.error("Error: 无效的 JSON: %s\n", json_string)
         if cfg.speak_mode:
-            speak.say_text("Didn't work. I will have to ignore this response then.")
-        logger.error("Error: Invalid JSON, setting it to empty JSON now.\n")
+            speak.say_text("没有成功。我将不得不忽略这个回应")
+        logger.error("Error:无效的JSON,现在将其设置为空JSON。\n")
         json_string = {}
 
     return json_string
@@ -76,7 +76,7 @@ def print_assistant_thoughts(assistant_reply):
             # Parse and print Assistant response
             assistant_reply_json = fix_and_parse_json(assistant_reply)
         except json.JSONDecodeError as e:
-            logger.error("Error: Invalid JSON in assistant thoughts\n", assistant_reply)
+            logger.error("Error: 机器人的想法中包含无效的JSON格式。\n", assistant_reply)
             assistant_reply_json = attempt_to_fix_json_by_finding_outermost_brackets(
                 assistant_reply
             )
@@ -88,7 +88,7 @@ def print_assistant_thoughts(assistant_reply):
             try:
                 assistant_reply_json = json.loads(assistant_reply_json)
             except json.JSONDecodeError as e:
-                logger.error("Error: Invalid JSON\n", assistant_reply)
+                logger.error("Error: 无效的 JSON\n", assistant_reply)
                 assistant_reply_json = (
                     attempt_to_fix_json_by_finding_outermost_brackets(
                         assistant_reply_json
@@ -143,8 +143,7 @@ def print_assistant_thoughts(assistant_reply):
         logger.error("Traceback: \n", call_stack)
         if cfg.speak_mode:
             speak.say_text(
-                "I have received an invalid JSON response from the OpenAI API."
-                " I cannot ignore this response."
+                "我从OpenAI API接收到了一个无效的JSON响应。我不能忽略这个响应。"
             )
 
     # All other errors, return "Error: + error message"
@@ -162,17 +161,17 @@ def construct_prompt():
         logger.typewriter_log("Goals:", Fore.GREEN, f"{config.ai_goals}")
     elif config.ai_name:
         logger.typewriter_log(
-            "Welcome back! ",
+            f"欢迎回来! ",
             Fore.GREEN,
-            f"Would you like me to return to being {config.ai_name}?",
+            f"你想让我变回原来的样子吗 {config.ai_name}?",
             speak_text=True,
         )
         should_continue = utils.clean_input(
-            f"""Continue with the last settings?
-Name:  {config.ai_name}
-Role:  {config.ai_role}
-Goals: {config.ai_goals}
-Continue (y/n): """
+            f"""继续上次的这些设置?
+名称:  {config.ai_name}
+职责:  {config.ai_role}
+目标: {config.ai_goals}
+继续 (输入y，继续上一次设置/输入n，重新来过): """)
         )
         if should_continue.lower() == "n":
             config = AIConfig()
@@ -193,45 +192,41 @@ def prompt_user():
     ai_name = ""
     # Construct the prompt
     logger.typewriter_log(
-        "Welcome to Auto-GPT! ",
+        "欢迎来到 Auto-GPT-ZH! ",
         Fore.GREEN,
-        "Enter the name of your AI and its role below. Entering nothing will load"
+        "在下面输入您的 AI 的名称及其角色。什么都不输入将加载"
         " defaults.",
         speak_text=True,
     )
 
     # Get AI Name from User
     logger.typewriter_log(
-        "Name your AI: ", Fore.GREEN, "For example, 'Entrepreneur-GPT'"
-    )
-    ai_name = utils.clean_input("AI Name: ")
+         "为您的 AI 命名：",Fore.GREEN,"例如，'AJ-1号-GPT'"
+     )
+    ai_name = utils.clean_input("AI 机器人名称: ")
     if ai_name == "":
-        ai_name = "Entrepreneur-GPT"
+        ai_name = "AJ-1号-GPT"
 
     logger.typewriter_log(
-        f"{ai_name} here!", Fore.LIGHTBLUE_EX, "I am at your service.", speak_text=True
+        f"{ai_name} 在这里!", Fore.LIGHTBLUE_EX, "我随时为您服务。", speak_text=True
     )
 
     # Get AI Role from User
     logger.typewriter_log(
-        "Describe your AI's role: ",
+        "描述您的 AI 的职责：",
         Fore.GREEN,
-        "For example, 'an AI designed to autonomously develop and run businesses with"
-        " the sole goal of increasing your net worth.'",
+        "例如，'一种旨在自主开发和经营业务的人工智能，其唯一目标是增加你的净资产。"
     )
-    ai_role = utils.clean_input(f"{ai_name} is: ")
+    ai_role = utils.clean_input(f"{ai_name} 的职责: ")
     if ai_role == "":
-        ai_role = "an AI designed to autonomously develop and run businesses with the"
-        " sole goal of increasing your net worth."
+        ai_role = "一个旨在自主开发和经营企业以唯一目标增加你净值的人工智能"
 
     # Enter up to 5 goals for the AI
     logger.typewriter_log(
-        "Enter up to 5 goals for your AI: ",
+        "AJ提示你:输入最多5个要帮你实现的功能/目标 ",
         Fore.GREEN,
-        "For example: \nIncrease net worth, Grow Twitter Account, Develop and manage"
-        " multiple businesses autonomously'",
-    )
-    print("Enter nothing to load defaults, enter nothing when finished.", flush=True)
+         "例如：\n增加公众号关注者、市场调研、自主开发网站等等")
+    print("输入空白以加载默认值，完成时不要输入任何内容。", flush=True)
     ai_goals = []
     for i in range(5):
         ai_goal = utils.clean_input(f"{Fore.LIGHTBLUE_EX}Goal{Style.RESET_ALL} {i+1}: ")
@@ -296,57 +291,50 @@ def parse_arguments():
     args = parser.parse_args()
 
     if args.debug:
-        logger.typewriter_log("Debug Mode: ", Fore.GREEN, "ENABLED")
+        logger.typewriter_log("调试模式: ", Fore.GREEN, "启用")
         cfg.set_debug_mode(True)
 
     if args.continuous:
-        logger.typewriter_log("Continuous Mode: ", Fore.RED, "ENABLED")
+        logger.typewriter_log("连续模式: ", Fore.RED, "启用")
         logger.typewriter_log(
-            "WARNING: ",
+            "警告: ",
             Fore.RED,
-            "Continuous mode is not recommended. It is potentially dangerous and may"
-            " cause your AI to run forever or carry out actions you would not usually"
-            " authorise. Use at your own risk.",
-        )
+            "不推荐连续模式。 它具有潜在危险，可能会导致您的 AI 永远运行或执行您通常不会授权的操作。 使用风险自负。")
         cfg.set_continuous_mode(True)
 
         if args.continuous_limit:
             logger.typewriter_log(
-                "Continuous Limit: ", Fore.GREEN, f"{args.continuous_limit}"
+                "连续模式 限制: ", Fore.GREEN, f"{args.continuous_limit}"
             )
             cfg.set_continuous_limit(args.continuous_limit)
 
     # Check if continuous limit is used without continuous mode
     if args.continuous_limit and not args.continuous:
-        parser.error("--continuous-limit can only be used with --continuous")
+        parser.error("--continuous-limit 只能与--continuous一起使用")
 
     if args.speak:
-        logger.typewriter_log("Speak Mode: ", Fore.GREEN, "ENABLED")
+        logger.typewriter_log("语音模式: ", Fore.GREEN, "启用")
         cfg.set_speak_mode(True)
 
     if args.gpt3only:
-        logger.typewriter_log("GPT3.5 Only Mode: ", Fore.GREEN, "ENABLED")
+        logger.typewriter_log("使用 GPT3.5 API: ", Fore.GREEN, "启用")
         cfg.set_smart_llm_model(cfg.fast_llm_model)
 
     if args.gpt4only:
-        logger.typewriter_log("GPT4 Only Mode: ", Fore.GREEN, "ENABLED")
+        logger.typewriter_log("使用 GPT4 API: ", Fore.GREEN, "启用")
         cfg.set_fast_llm_model(cfg.smart_llm_model)
 
     if args.memory_type:
         supported_memory = get_supported_memory_backends()
         chosen = args.memory_type
         if not chosen in supported_memory:
-            logger.typewriter_log(
-                "ONLY THE FOLLOWING MEMORY BACKENDS ARE SUPPORTED: ",
-                Fore.RED,
-                f"{supported_memory}",
-            )
-            logger.typewriter_log("Defaulting to: ", Fore.YELLOW, cfg.memory_backend)
+            logger.typewriter_log("仅支持以下服务去存储内容: ", Fore.RED, f'{supported_memory}')
+            logger.typewriter_log(f"默认为: ", Fore.YELLOW, cfg.memory_backend)
         else:
             cfg.memory_backend = chosen
 
     if args.skip_reprompt:
-        logger.typewriter_log("Skip Re-prompt: ", Fore.GREEN, "ENABLED")
+        logger.typewriter_log("跳过重复提示：", Fore.GREEN, "已启用")
         cfg.skip_reprompt = True
 
     if args.ai_settings_file:
@@ -355,11 +343,11 @@ def parse_arguments():
         # Validate file
         (validated, message) = utils.validate_yaml_file(file)
         if not validated:
-            logger.typewriter_log("FAILED FILE VALIDATION", Fore.RED, message)
+            logger.typewriter_log("文件验证失败", Fore.RED, message)
             logger.double_check()
             exit(1)
 
-        logger.typewriter_log("Using AI Settings File:", Fore.GREEN, file)
+        logger.typewriter log("使用 AI 设置文件:", For.GREEN, file)
         cfg.ai_settings_file = file
         cfg.skip_reprompt = True
 
@@ -377,14 +365,11 @@ def main():
     full_message_history = []
     next_action_count = 0
     # Make a constant:
-    user_input = (
-        "Determine which next command to use, and respond using the"
-        " format specified above:"
-    )
+    user_input = "确定要使用的下一个命令，并使用上面指定的格式进行响应:"
     # Initialize memory and make sure it is empty.
     # this is particularly important for indexing and referencing pinecone memory
     memory = get_memory(cfg, init=True)
-    print(f"Using memory of type: {memory.__class__.__name__}")
+    print(f"使用存储的类型: {memory.__class__.__name__}")
     agent = Agent(
         ai_name=ai_name,
         memory=memory,
@@ -439,7 +424,7 @@ class Agent:
                 and loop_count > cfg.continuous_limit
             ):
                 logger.typewriter_log(
-                    "Continuous Limit Reached: ", Fore.YELLOW, f"{cfg.continuous_limit}"
+                    "连续达到限制: ", Fore.YELLOW, f"{cfg.continuous_limit}"
                 )
                 break
 
@@ -462,7 +447,7 @@ class Agent:
                     attempt_to_fix_json_by_finding_outermost_brackets(assistant_reply)
                 )
                 if cfg.speak_mode:
-                    speak.say_text(f"I want to execute {command_name}")
+                    speak.say_text(f"我要执行 {command_name}")
             except Exception as e:
                 logger.error("Error: \n", str(e))
 
@@ -472,17 +457,14 @@ class Agent:
                 # to exit
                 self.user_input = ""
                 logger.typewriter_log(
-                    "NEXT ACTION: ",
+                    "下一步操作: ",
                     Fore.CYAN,
                     f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}"
                     f"  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}",
                 )
                 print(
-                    "Enter 'y' to authorise command, 'y -N' to run N continuous"
-                    " commands, 'n' to exit program, or enter feedback for"
-                    f" {self.ai_name}...",
-                    flush=True,
-                )
+                    f"输入'y'授权命令，'y -N'运行N个连续命令，'n'退出程序，或为{ai_name}输入反馈...",
+                    flush=True)
                 while True:
                     console_input = utils.clean_input(
                         Fore.MAGENTA + "Input:" + Style.RESET_ALL
@@ -497,10 +479,7 @@ class Agent:
                             )
                             self.user_input = "GENERATE NEXT COMMAND JSON"
                         except ValueError:
-                            print(
-                                "Invalid input format. Please enter 'y -n' where n"
-                                " is the number of continuous tasks."
-                            )
+                            print("输入格式无效。 请输入'y -n',其中 n 是连续任务的数量。 例如: y -1")
                             continue
                         break
                     elif console_input.lower() == "n":
@@ -513,17 +492,17 @@ class Agent:
 
                 if self.user_input == "GENERATE NEXT COMMAND JSON":
                     logger.typewriter_log(
-                        "-=-=-=-=-=-=-= COMMAND AUTHORISED BY USER -=-=-=-=-=-=-=",
+                        "-=-=-=-=-=-=-= 用户授权的命令 -=-=-=-=-=-=-=",
                         Fore.MAGENTA,
                         "",
                     )
                 elif self.user_input == "EXIT":
-                    print("Exiting...", flush=True)
+                    print("退出中...", flush=True)
                     break
             else:
                 # Print command
                 logger.typewriter_log(
-                    "NEXT ACTION: ",
+                    "下一步操作: ",
                     Fore.CYAN,
                     f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}"
                     f"  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}",
@@ -531,11 +510,9 @@ class Agent:
 
             # Execute command
             if command_name is not None and command_name.lower().startswith("error"):
-                result = (
-                    f"Command {command_name} threw the following error: {arguments}"
-                )
+                result = f"Command {command_name} 抛出以下错误：" + arguments
             elif command_name == "human_feedback":
-                result = f"Human feedback: {self.user_input}"
+                result = f"人工反馈: {self.user_input}"
             else:
                 result = (
                     f"Command {command_name} "
@@ -544,11 +521,9 @@ class Agent:
                 if self.next_action_count > 0:
                     self.next_action_count -= 1
 
-            memory_to_add = (
-                f"Assistant Reply: {assistant_reply} "
-                f"\nResult: {result} "
-                f"\nHuman Feedback: {self.user_input} "
-            )
+            memory_to_add = f"机器人回复: {assistant_reply} " \
+                            f"\结果: {result} " \
+                            f"\人工反馈: {self.user_input} "
 
             self.memory.add(memory_to_add)
 
@@ -561,10 +536,10 @@ class Agent:
                 logger.typewriter_log("SYSTEM: ", Fore.YELLOW, result)
             else:
                 self.full_message_history.append(
-                    chat.create_chat_message("system", "Unable to execute command")
+                    chat.create_chat_message("system", "无法执行命令")
                 )
                 logger.typewriter_log(
-                    "SYSTEM: ", Fore.YELLOW, "Unable to execute command"
+                    "SYSTEM: ", Fore.YELLOW, "无法执行命令"
                 )
 
 
