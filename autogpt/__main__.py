@@ -172,7 +172,7 @@ def construct_prompt():
 职责:  {config.ai_role}
 目标: {config.ai_goals}
 继续 (输入y，继续上一次设置/输入n，重新来过): """)
-        )
+
         if should_continue.lower() == "n":
             config = AIConfig()
 
@@ -347,7 +347,7 @@ def parse_arguments():
             logger.double_check()
             exit(1)
 
-        logger.typewriter log("使用 AI 设置文件:", For.GREEN, file)
+        logger.typewriter_log("使用 AI 设置文件:", Fore.GREEN, file)
         cfg.ai_settings_file = file
         cfg.skip_reprompt = True
 
