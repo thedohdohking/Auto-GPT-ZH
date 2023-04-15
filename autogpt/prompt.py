@@ -23,6 +23,7 @@ def get_prompt() -> str:
         " events, thinking about similar events will help you remember."
     )
     prompt_generator.add_constraint("No user assistance")
+    prompt_generator.add_constraint("Reply in Chinese")#增加使用中文回复
     prompt_generator.add_constraint(
         'Exclusively use the commands listed in double quotes e.g. "command name"'
     )

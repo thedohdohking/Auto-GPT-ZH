@@ -37,17 +37,17 @@ def get_command(response):
         response_json = fix_and_parse_json(response)
 
         if "command" not in response_json:
-            return "Error:", "Missing 'command' object in JSON"
+            return "Error:","JSON 中缺少'command'对象"
 
         if not isinstance(response_json, dict):
-            return "Error:", f"'response_json' object is not dictionary {response_json}"
+            return "Error:", f"'response_json' 对象不是字典 {response_json}"
 
         command = response_json["command"]
         if not isinstance(command, dict):
-            return "Error:", "'command' object is not a dictionary"
+            return "Error:", "'command' 对象不是字典"
 
         if "name" not in command:
-            return "Error:", "Missing 'name' field in 'command' object"
+            return "Error:", "'command'对象中缺少'name'字段 "
 
         command_name = command["name"]
 
@@ -56,7 +56,7 @@ def get_command(response):
 
         return command_name, arguments
     except json.decoder.JSONDecodeError:
-        return "Error:", "Invalid JSON"
+        return "Error:", "无效的 JSON"
     # All other errors, return "Error: + error message"
     except Exception as e:
         return "Error:", str(e)
@@ -120,9 +120,7 @@ def execute_command(command_name, arguments):
                 return execute_shell(arguments["command_line"])
             else:
                 return (
-                    "You are not allowed to run local shell commands. To execute"
-                    " shell commands, EXECUTE_LOCAL_COMMANDS must be set to 'True' "
-                    "in your config. Do not attempt to bypass the restriction."
+                    "你不允许运行本地 shell 命令。要执行 shell 命令，必须在配置文件中将 EXECUTE_LOCAL_COMMANDS 设置为 'True'。不要尝试绕过此限制。"
                 )
         elif command_name == "generate_image":
             return generate_image(arguments["prompt"])
@@ -131,11 +129,7 @@ def execute_command(command_name, arguments):
         elif command_name == "task_complete":
             shutdown()
         else:
-            return (
-                f"Unknown command '{command_name}'. Please refer to the 'COMMANDS'"
-                " list for available commands and only respond in the specified JSON"
-                " format."
-            )
+            return f"未知的命令 '{command_name}'. 请参阅“COMMANDS”列表以获取可用命令,并仅以指定的 JSON 格式响应。"
     # All errors, return "Error: + error message"
     except Exception as e:
         return "Error: " + str(e)
@@ -143,7 +137,7 @@ def execute_command(command_name, arguments):
 
 def get_datetime():
     """Return the current date and time"""
-    return "Current date and time: " + datetime.datetime.now().strftime(
+    return "当前日期和时间: " + datetime.datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )
 
@@ -198,7 +192,7 @@ def google_official_search(query, num_results=8):
         ) == 403 and "invalid API key" in error_details.get("error", {}).get(
             "message", ""
         ):
-            return "Error: The provided Google API key is invalid or missing."
+            return "Error: 提供的 Google API Key无效."
         else:
             return f"Error: {e}"
 
@@ -210,7 +204,7 @@ def get_text_summary(url, question):
     """Return the results of a google search"""
     text = scrape_text(url)
     summary = summarize_text(url, text, question)
-    return """ "Result" : """ + summary
+    return """ "结果" : """ + summary
 
 
 def get_hyperlinks(url):
@@ -220,7 +214,7 @@ def get_hyperlinks(url):
 
 def shutdown():
     """Shut down the program"""
-    print("Shutting down...")
+    print("关机中...")
     quit()
 
 
@@ -228,9 +222,8 @@ def start_agent(name, task, prompt, model=cfg.fast_llm_model):
     """Start an agent with a given name, task, and prompt"""
     # Remove underscores from name
     voice_name = name.replace("_", " ")
-
-    first_message = f"""You are {name}.  Respond with: "Acknowledged"."""
-    agent_intro = f"{voice_name} here, Reporting for duty!"
+    first_message = f"""你是 {name}.  回应: "Acknowledged". 中文版来自自阿杰，公众号内获取最新代码《阿杰的人生路》"""
+    agent_intro = f"{voice_name} 在这里，向您报到！"
 
     # Create agent
     if cfg.speak_mode:
@@ -238,7 +231,7 @@ def start_agent(name, task, prompt, model=cfg.fast_llm_model):
     key, ack = agents.create_agent(task, first_message, model)
 
     if cfg.speak_mode:
-        say_text(f"Hello {voice_name}. Your task is as follows. {task}.")
+        say_text(f"Hello {voice_name}.你的任务如下. {task}.")
 
     # Assign task (prompt), get response
     agent_response = agents.message_agent(key, prompt)
@@ -255,7 +248,7 @@ def message_agent(key, message):
     elif isinstance(key, str):
         agent_response = agents.message_agent(key, message)
     else:
-        return "Invalid key, must be an integer or a string."
+        return "无效的Key, 必须是整数或字符串."
 
     # Speak response
     if cfg.speak_mode:

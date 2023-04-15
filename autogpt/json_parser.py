@@ -58,10 +58,8 @@ def fix_and_parse_json(
     except (json.JSONDecodeError, ValueError) as e:  # noqa: F841
         if try_to_fix_with_gpt:
             logger.warn(
-                "Warning: Failed to parse AI output, attempting to fix."
-                "\n If you see this warning frequently, it's likely that"
-                " your prompt is confusing the AI. Try changing it up"
-                " slightly."
+                "Warning: 无法解析 AI 输出，尝试自主进行修复。"
+                "\n 如果你经常看到这个警告, 很可能是因为你的提示(prompt)让 AI 困惑了。尝试略微改变提示内容。"
             )
             # Now try to fix this up using the ai_functions
             ai_fixed_json = fix_json(json_str, JSON_SCHEMA)
@@ -71,7 +69,7 @@ def fix_and_parse_json(
             else:
                 # This allows the AI to react to the error message,
                 #   which usually results in it correcting its ways.
-                logger.error("Failed to fix AI output, telling the AI.")
+                logger.error("修复 AI 输出失败，通知 AI. 无需干预")
                 return json_str
         else:
             raise e
@@ -97,9 +95,9 @@ def fix_json(json_str: str, schema: str) -> str:
         function_string, args, description_string, model=cfg.fast_llm_model
     )
     logger.debug("------------ JSON FIX ATTEMPT ---------------")
-    logger.debug(f"Original JSON: {json_str}")
+    logger.debug(f"原始 JSON: {json_str}")
     logger.debug("-----------")
-    logger.debug(f"Fixed JSON: {result_string}")
+    logger.debug(f"修复后 JSON: {result_string}")
     logger.debug("----------- END OF FIX ATTEMPT ----------------")
 
     try:

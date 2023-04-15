@@ -24,7 +24,7 @@ def browse_website(url, question):
     if len(links) > 5:
         links = links[:5]
     close_browser(driver)
-    return f"Answer gathered from website: {summary_text} \n \n Links: {links}", driver
+    return f"从网站收集的答案: {summary_text} \n \n 链接: {links}", driver
 
 
 def scrape_text_with_selenium(url):

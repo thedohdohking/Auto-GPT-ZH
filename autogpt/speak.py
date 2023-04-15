@@ -41,7 +41,7 @@ queue_semaphore = Semaphore(
 
 
 def eleven_labs_speech(text, voice_index=0):
-    """Speak text using elevenlabs.io's API"""
+    """使用elevenlabs.io的API朗读文本"""
     tts_url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}".format(
         voice_id=voices[voice_index]
     )
@@ -56,8 +56,8 @@ def eleven_labs_speech(text, voice_index=0):
             os.remove("speech.mpeg")
         return True
     else:
-        print("Request failed with status code:", response.status_code)
-        print("Response content:", response.content)
+        print("请求失败，状态码为:", response.status_code)
+        print("响应内容:", response.content)
         return False
 
 

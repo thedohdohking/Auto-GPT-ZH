@@ -145,16 +145,16 @@ def create_message(chunk, question):
     """Create a message for the user to summarize a chunk of text"""
     return {
         "role": "user",
-        "content": f'"""{chunk}""" Using the above text, please answer the following'
-        f' question: "{question}" -- if the question cannot be answered using the'
-        " text, please summarize the text.",
+        "content": f'"""{chunk}""" 使用以上文本，请以中文回答以下问题'
+        f' question: "{question}" -- 如果问题无法使用文本回答'
+        " 请总结文本",
     }
 
 
 def summarize_text(url, text, question):
     """Summarize text using the LLM model"""
     if not text:
-        return "Error: No text to summarize"
+        return "Error: 没有文字可以总结"
 
     text_length = len(text)
     print(f"Text length: {text_length} characters")

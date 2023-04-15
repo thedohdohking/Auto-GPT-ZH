@@ -15,7 +15,7 @@ def safe_join(base, *paths):
     norm_new_path = os.path.normpath(new_path)
 
     if os.path.commonprefix([base, norm_new_path]) != base:
-        raise ValueError("Attempted to access outside of working directory.")
+        raise ValueError("尝试访问工作目录之外的位置。")
 
     return norm_new_path
 
@@ -76,16 +76,16 @@ def ingest_file(filename, memory, max_length=4000, overlap=200):
 
         num_chunks = len(chunks)
         for i, chunk in enumerate(chunks):
-            print(f"Ingesting chunk {i + 1} / {num_chunks} into memory")
+            print(f"正在摄取块 {i + 1} / {num_chunks} 到内存中")
             memory_to_add = (
                 f"Filename: {filename}\n" f"Content part#{i + 1}/{num_chunks}: {chunk}"
             )
 
             memory.add(memory_to_add)
 
-        print(f"Done ingesting {num_chunks} chunks from {filename}.")
+        print(f"完成从 {filename} 摄取 {num_chunks}个chunk.")
     except Exception as e:
-        print(f"Error while ingesting file '{filename}': {str(e)}")
+        print(f"Error: 摄取文件时 '{filename}': {str(e)}")
 
 
 def write_to_file(filename, text):
@@ -97,7 +97,7 @@ def write_to_file(filename, text):
             os.makedirs(directory)
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(text)
-        return "File written to successfully."
+        return "文件写入成功。"
     except Exception as e:
         return "Error: " + str(e)
 
@@ -108,7 +108,7 @@ def append_to_file(filename, text):
         filepath = safe_join(working_directory, filename)
         with open(filepath, "a") as f:
             f.write(text)
-        return "Text appended successfully."
+        return "已成功添加文本."
     except Exception as e:
         return "Error: " + str(e)
 
@@ -118,7 +118,7 @@ def delete_file(filename):
     try:
         filepath = safe_join(working_directory, filename)
         os.remove(filepath)
-        return "File deleted successfully."
+        return "文件删除成功."
     except Exception as e:
         return "Error: " + str(e)
 
