@@ -47,7 +47,7 @@ def create_chat_completion(
             if cfg.debug_mode:
                 print(
                     Fore.RED + "Error: ",
-                    "API Rate Limit Reached. Waiting 20 seconds..." + Fore.RESET,
+                    "已达到 API 速率限制。 等待 20 秒..." + Fore.RESET,
                 )
             time.sleep(20)
         except APIError as e:
@@ -55,7 +55,7 @@ def create_chat_completion(
                 if cfg.debug_mode:
                     print(
                         Fore.RED + "Error: ",
-                        "API Bad gateway. Waiting 20 seconds..." + Fore.RESET,
+                        "API 网关错误。 等待 20 秒..." + Fore.RESET,
                     )
                 time.sleep(20)
             else:
@@ -64,6 +64,6 @@ def create_chat_completion(
                 raise
 
     if response is None:
-        raise RuntimeError("Failed to get response after 5 retries")
+        raise RuntimeError("5 次重试后未能得到响应")
 
     return response.choices[0].message["content"]

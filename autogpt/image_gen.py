@@ -61,7 +61,7 @@ def generate_image(prompt):
 
         image.save(os.path.join(working_directory, filename))
 
-        return "Saved to disk:" + filename
+        return "已保存:" + filename
 
     else:
-        return "No Image Provider Set"
+        return "没有设置图像提供者"
